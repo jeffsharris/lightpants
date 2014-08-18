@@ -38,7 +38,7 @@ void setup() {
 }
 
 // function prototypes, do not remove these!
-void candyCane(uint32_t c, uint8_t len, uint8_t wait);
+void candyCane(uint32_t c1, uint32_t c2, uint8_t len, uint8_t wait);
 void colorChase(uint32_t c, uint8_t wait);
 void colorWipe(uint32_t c, uint8_t wait);
 void dither(uint32_t c, uint8_t wait);
@@ -50,7 +50,12 @@ void rainbowCycle(uint8_t wait);
 uint32_t Wheel(uint16_t WheelPos);
 
 void loop() {
- candyCane(strip.Color(127,0,0), 3, 7, 20);
+ candyCane(strip.Color(127,0,0), strip.Color(127, 127, 127), 3, 7, 100); // red + white
+ candyCane(strip.Color(127,127,0), strip.Color(127, 0, 0), 3, 7, 100); // yellow + red
+ candyCane(strip.Color(127,127,0), strip.Color(0, 127, 0), 3, 7, 100); // yellow + green
+ candyCane(strip.Color(0,127,0), strip.Color(0, 127, 127), 3, 7, 100); // green + cyan
+ candyCane(strip.Color(0,127,127), strip.Color(0, 0, 127), 3, 7, 100); // cyan + blue
+ candyCane(strip.Color(0,0,127), strip.Color(127, 0, 127), 3, 7, 100); // blue + magenta
  
   spiral(strip.Color(127,127,127), true, 20); // white
   spiral(strip.Color(127,0,0), false, 20);     // red
@@ -132,20 +137,27 @@ void rainbowCycle(uint8_t wait) {
   }
 }
 
-void candyCane(uint32_t c, uint8_t len, uint8_t space, uint8_t wait) {
+void candyCane(uint32_t c1, uint32_t c2, uint8_t len, uint8_t space, uint8_t wait) {
   uint32_t pixelColor;
+  
   for (int i = 0; i < LEG_LENGTH; i++) {
-    if (i % (len + space) < len) {
-      pixelColor = c;
-    } else {
-      pixelColor = strip.Color(127, 127, 127);
-    }
-    for (int j = 0; j < N_STRIPS; j++) {
-      strip.setPixelColor(lights[j][i]);
+    int location = 0;
+    while (location < LEG_LENGTH) {
+      for (int j = 0; j < len; j++, location++) {
+        for (int k = 0; k < N_STRIPS; k++) {
+          strip.setPixelColor(lights[k][(i + location) % LEG_LENGTH], c1);
+        }
+        
+      }
+      for (int j = 0; j < space; j++, location++) {
+        for (int k = 0; k < N_STRIPS; k++) {
+          strip.setPixelColor(lights[k][(i + location) % LEG_LENGTH], c2);
+        }
+      }
     }
     strip.show();
     delay(wait);
-  }
+  } 
 }
       
 
