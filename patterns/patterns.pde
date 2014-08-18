@@ -16,9 +16,18 @@ int dataPin = 16;
 int clockPin = 15;
 #endif
 
+#define N_LEDS       128
+#define LEG_LENGTH   32
+#define N_STRIPS     4
+
 // Set the first variable to the NUMBER of pixels. 32 = 32 pixels in a row
 // The LED strips are 32 LEDs per meter but you can extend/cut the strip
-LPD8806 strip = LPD8806(128, dataPin, clockPin);
+LPD8806 strip = LPD8806(N_LEDS, dataPin, clockPin);
+
+int lights[][32] = { {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31},
+                     {32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 40, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63},
+                     {64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95},
+                     {96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127} };
 
 void setup() {
   // Start up the LED strip
@@ -29,16 +38,34 @@ void setup() {
 }
 
 // function prototypes, do not remove these!
+void candyCane(uint32_t c, uint8_t len, uint8_t wait);
 void colorChase(uint32_t c, uint8_t wait);
 void colorWipe(uint32_t c, uint8_t wait);
 void dither(uint32_t c, uint8_t wait);
 void scanner(uint8_t r, uint8_t g, uint8_t b, uint8_t wait);
+void spiralDown(uint32_t c, uint8_t wait);
+void spiralUp(uint32_t c, uint8_t wait);
 void wave(uint32_t c, int cycles, uint8_t wait);
 void rainbowCycle(uint8_t wait);
 uint32_t Wheel(uint16_t WheelPos);
 
 void loop() {
-
+ candyCane(strip.Color(127,0,0), 3, 7, 20);
+ 
+  spiral(strip.Color(127,127,127), true, 20); // white
+  spiral(strip.Color(127,0,0), false, 20);     // red
+  spiral(strip.Color(127,127,0), true, 20);   // yellow
+  spiral(strip.Color(0,127,0), false, 20);     // green
+  spiral(strip.Color(0,127,127), true, 20);   // cyan
+  spiral(strip.Color(0,0,127), false, 20);     // blue
+  spiral(strip.Color(127,0,127), true, 20);   // magenta
+  
+  for (int i=0; i < strip.numPixels(); i++) {
+    strip.setPixelColor(i, 0);
+  }
+  
+}
+void test() {
   // Send a simple pixel chase in...
   colorChase(strip.Color(127,127,127), 20); // white
   colorChase(strip.Color(127,0,0), 20);     // red
@@ -61,6 +88,15 @@ void loop() {
   dither(strip.Color(0,0,0), 15);           // black, fast
   dither(strip.Color(127,127,0), 50);       // yellow, slow
   dither(strip.Color(0,0,0), 15);           // black, fast
+  
+  // Spirals
+  spiral(strip.Color(127,127,127), true, 20); // white
+  spiral(strip.Color(127,0,0), false, 20);     // red
+  spiral(strip.Color(127,127,0), true, 20);   // yellow
+  spiral(strip.Color(0,127,0), false, 20);     // green
+  spiral(strip.Color(0,127,127), true, 20);   // cyan
+  spiral(strip.Color(0,0,127), false, 20);     // blue
+  spiral(strip.Color(127,0,127), true, 20);   // magenta
 
   // Back-and-forth lights
   scanner(127,0,0, 30);        // red, slow
@@ -95,6 +131,48 @@ void rainbowCycle(uint8_t wait) {
     delay(wait);
   }
 }
+
+void candyCane(uint32_t c, uint8_t len, uint8_t space, uint8_t wait) {
+  uint32_t pixelColor;
+  for (int i = 0; i < LEG_LENGTH; i++) {
+    if (i % (len + space) < len) {
+      pixelColor = c;
+    } else {
+      pixelColor = strip.Color(127, 127, 127);
+    }
+    for (int j = 0; j < N_STRIPS; j++) {
+      strip.setPixelColor(lights[j][i]);
+    }
+    strip.show();
+    delay(wait);
+  }
+}
+      
+
+void spiral(uint32_t c, boolean downDirection, uint8_t wait) {
+  uint16_t j;
+  
+  if (downDirection) {  
+    for (int i = 0; i < LEG_LENGTH; i++) {
+      for (int j = 0; j < N_STRIPS; j++) {
+        strip.setPixelColor(lights[j][i], c);
+      }
+      strip.show();
+      delay(wait);
+    }
+  } else {
+    for (int i = 0; i < LEG_LENGTH; i++) {
+      for (int j = 0; j < N_STRIPS; j++) {
+        strip.setPixelColor(lights[j][LEG_LENGTH - 1 - i], c);
+      }
+      strip.show();
+      delay(wait);
+    }
+  }       
+}
+
+
+
 
 // fill the dots one after the other with said color
 // good for testing purposes
