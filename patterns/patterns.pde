@@ -45,20 +45,20 @@ void dither(uint32_t c, uint8_t wait);
 void scanner(uint8_t r, uint8_t g, uint8_t b, uint8_t wait);
 void spiralDown(uint32_t c, uint8_t wait);
 void spiralUp(uint32_t c, uint8_t wait);
-void stackDown(uint32_t c1, uint32_t c2, uint8_t wait);
+void stack(uint32_t c1, uint32_t c2, boolean downDirection, uint8_t wait);
 void wave(uint32_t c, int cycles, uint8_t wait);
 void rainbowCycle(uint8_t wait);
 void rainbowCycleWave(uint8_t wait);
 uint32_t Wheel(uint16_t WheelPos);
 
 void loop() {
-  stackDown(strip.Color(127, 0, 0), strip.Color(127, 127, 127), 5); // red stacking on white
-  stackDown(strip.Color(127, 127, 0), strip.Color(127, 0, 0), 5); // yellow stacking on red 
-  stackDown(strip.Color(0, 127, 0), strip.Color(127, 127, 0), 5); // green stacking on yellow
-  stackDown(strip.Color(0, 127, 127), strip.Color(0, 127, 0), 5); // cyan stacking on green
-  stackDown(strip.Color(0, 0, 127), strip.Color(0, 127, 127), 5); // blue stacking on cyan
-  stackDown(strip.Color(127, 0, 127), strip.Color(0, 0, 127), 5); // magenta stacking on blue
-  stackDown(strip.Color(127, 127, 127), strip.Color(127, 0, 127), 5); // white stacking on magenta  
+  stack(strip.Color(127, 0, 0), strip.Color(127, 127, 127), true, 5); // red stacking on white
+  stack(strip.Color(127, 127, 0), strip.Color(127, 0, 0), false, 5); // yellow stacking on red 
+  stack(strip.Color(0, 127, 0), strip.Color(127, 127, 0), true, 5); // green stacking on yellow
+  stack(strip.Color(0, 127, 127), strip.Color(0, 127, 0), false, 5); // cyan stacking on green
+  stack(strip.Color(0, 0, 127), strip.Color(0, 127, 127), true, 5); // blue stacking on cyan
+  stack(strip.Color(127, 0, 127), strip.Color(0, 0, 127), false, 5); // magenta stacking on blue
+  stack(strip.Color(127, 127, 127), strip.Color(127, 0, 127), true, 5); // white stacking on magenta  
   
   rainbowCycleWave(0);
   
@@ -249,26 +249,44 @@ void spiral(uint32_t c, boolean downDirection, uint8_t wait) {
   }       
 }
 
-// Create a stack of colors that starts from the top and builds at the bottom
-void stackDown(uint32_t c1, uint32_t c2, uint8_t wait) {
+// Create a stack of colors in either up or down direction
+void stack(uint32_t c1, uint32_t c2, boolean downDirection, uint8_t wait) {
   for (int i = 0; i < strip.numPixels(); i++) {
     strip.setPixelColor(i, c2);
   }
-  for (int max = LEG_LENGTH; max > 0; max--) {
-    for (int j = 0; j < N_STRIPS; j++) {
-      strip.setPixelColor(lights[j][0], c1); // Set the first row to the color
-    }
-    strip.show();
-    delay(wait);
-    for (int i = 1; i < max; i++) { // Move the colored row down
+  if (downDirection) {
+    for (int max = LEG_LENGTH; max > 0; max--) {
       for (int j = 0; j < N_STRIPS; j++) {
-        strip.setPixelColor(lights[j][i], c1); // Move the row down
-        strip.setPixelColor(lights[j][i-1], c2); // Clear the previous row
+        strip.setPixelColor(lights[j][0], c1); // Set the first row to the color
       }
       strip.show();
       delay(wait);
+      for (int i = 1; i < max; i++) { // Move the colored row down
+        for (int j = 0; j < N_STRIPS; j++) {
+          strip.setPixelColor(lights[j][i], c1); // Move the row down
+          strip.setPixelColor(lights[j][i-1], c2); // Clear the previous row
+        }
+        strip.show();
+        delay(wait);
+      }
     }
-  }
+  } else {
+    for (int min = 0; min < LEG_LENGTH; min++) {
+      for (int j = 0; j < N_STRIPS; j++) {
+        strip.setPixelColor(lights[j][LEG_LENGTH - 1], c1); // Set the last row to the color
+      }
+      strip.show();
+      delay(wait);
+      for (int i = LEG_LENGTH - 2; i >= 0; i--) { // Move the colored row up
+        for (int j = 0; j < N_STRIPS; j++) {
+          strip.setPixelColor(lights[j][i], c1); // Move the row down
+          strip.setPixelColor(lights[j][i+1], c2); // Clear the previous row
+        }
+        strip.show();
+        delay(wait);
+      }
+    }
+  }    
 }
 
 
