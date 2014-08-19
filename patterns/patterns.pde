@@ -28,6 +28,7 @@ int lights[][32] = { {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
                      {63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32},
                      {64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95},
                      {127, 126, 125, 124, 123, 122, 121, 120, 119, 118, 117, 116, 115, 114, 113, 112, 111, 110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96} };
+                  
 
 void setup() {
   // Start up the LED strip
@@ -53,13 +54,14 @@ void wave(uint32_t c, int cycles, uint8_t wait);
 uint32_t Wheel(uint16_t WheelPos);
 
 void loop() {
-  merge(strip.Color(127, 0, 0), strip.Color(127, 127, 127), true, 20); // red on white
-  merge(strip.Color(127, 127, 0), strip.Color(127, 0, 0), false, 20); // yellow on red 
-  merge(strip.Color(0, 127, 0), strip.Color(127, 127, 0), true, 20); // green on yellow
-  merge(strip.Color(0, 127, 127), strip.Color(0, 127, 0), false, 20); // cyan on green
-  merge(strip.Color(0, 0, 127), strip.Color(0, 127, 127), true, 20); // blue on cyan
-  merge(strip.Color(127, 0, 127), strip.Color(0, 0, 127), false, 20); // magenta on blue
-  merge(strip.Color(127, 127, 127), strip.Color(127, 0, 127), true, 20); // white on magenta  
+test();
+  //  merge(strip.Color(127, 0, 0), strip.Color(127, 127, 127), true, 20); // red on white
+//  merge(strip.Color(127, 127, 0), strip.Color(127, 0, 0), false, 20); // yellow on red 
+//  merge(strip.Color(0, 127, 0), strip.Color(127, 127, 0), true, 20); // green on yellow
+//  merge(strip.Color(0, 127, 127), strip.Color(0, 127, 0), false, 20); // cyan on green
+//  merge(strip.Color(0, 0, 127), strip.Color(0, 127, 127), true, 20); // blue on cyan
+//  merge(strip.Color(127, 0, 127), strip.Color(0, 0, 127), false, 20); // magenta on blue
+//  merge(strip.Color(127, 127, 127), strip.Color(127, 0, 127), true, 20); // white on magenta  
   
 //  rainbowCycleWave(0);
 //  
@@ -126,53 +128,41 @@ void loop() {
   
 }
 void test() {
-  // Send a simple pixel chase in...
-  colorChase(strip.Color(127,127,127), 20); // white
-  colorChase(strip.Color(127,0,0), 20);     // red
-  colorChase(strip.Color(127,127,0), 20);   // yellow
-  colorChase(strip.Color(0,127,0), 20);     // green
-  colorChase(strip.Color(0,127,127), 20);   // cyan
-  colorChase(strip.Color(0,0,127), 20);     // blue
-  colorChase(strip.Color(127,0,127), 20);   // magenta
-
-  // Fill the entire strip with...
-  colorWipe(strip.Color(127,0,0), 20);      // red
-  colorWipe(strip.Color(0, 127,0), 20);     // green
-  colorWipe(strip.Color(0,0,127), 20);      // blue
-  colorWipe(strip.Color(0,0,0), 20);        // black
-
-  // Color sparkles
-  dither(strip.Color(0,127,127), 50);       // cyan, slow
-  dither(strip.Color(0,0,0), 15);           // black, fast
-  dither(strip.Color(127,0,127), 50);       // magenta, slow
-  dither(strip.Color(0,0,0), 15);           // black, fast
-  dither(strip.Color(127,127,0), 50);       // yellow, slow
-  dither(strip.Color(0,0,0), 15);           // black, fast
-  
-  // Spirals
-  spiral(strip.Color(127,127,127), true, 20); // white
-  spiral(strip.Color(127,0,0), false, 20);     // red
-  spiral(strip.Color(127,127,0), true, 20);   // yellow
-  spiral(strip.Color(0,127,0), false, 20);     // green
-  spiral(strip.Color(0,127,127), true, 20);   // cyan
-  spiral(strip.Color(0,0,127), false, 20);     // blue
-  spiral(strip.Color(127,0,127), true, 20);   // magenta
-
-  // Back-and-forth lights
-  scanner(127,0,0, 30);        // red, slow
-  scanner(0,0,127, 15);        // blue, fast
-
-  // Wavy ripple effects
-  wave(strip.Color(127,0,0), 4, 20);        // candy cane
-  wave(strip.Color(0,0,100), 2, 40);        // icy
-
-  // make a pretty rainbow cycle!
-  rainbowCycle(0);  // make it go through the cycle fairly fast
-
-  // Clear strip data before start of next effect
-  for (int i=0; i < strip.numPixels(); i++) {
-    strip.setPixelColor(i, 0);
+  for (int i = 0; i < N_STRIPS; i++) {
+  strip.setPixelColor(i * 32 + 0, strip.Color(127, 127, 127));
+  strip.setPixelColor(i * 32 + 1, strip.Color(127, 0, 0));
+  strip.setPixelColor(i * 32 + 2, strip.Color(127, 127, 0));
+  strip.setPixelColor(i * 32 + 3, strip.Color(0, 127, 0));
+  strip.setPixelColor(i * 32 + 4, strip.Color(0, 127, 127));
+  strip.setPixelColor(i * 32 + 5, strip.Color(0, 0, 127));
+  strip.setPixelColor(i * 32 + 6, strip.Color(127, 0, 0));
+  strip.setPixelColor(i * 32 + 7, strip.Color(127, 0, 127));
+  strip.setPixelColor(i * 32 + 8, strip.Color(45, 60, 127));
+  strip.setPixelColor(i * 32 + 9, strip.Color(0, 0, 0));
+  strip.setPixelColor(i * 32 + 10, strip.Color(127, 127, 127));
+  strip.setPixelColor(i * 32 + 11, strip.Color(127, 0, 0));
+  strip.setPixelColor(i * 32 + 12, strip.Color(127, 127, 0));
+  strip.setPixelColor(i * 32 + 13, strip.Color(0, 127, 0));
+  strip.setPixelColor(i * 32 + 14, strip.Color(0, 127, 127));
+  strip.setPixelColor(i * 32 + 15, strip.Color(0, 0, 127));
+  strip.setPixelColor(i * 32 + 16, strip.Color(127, 0, 0));
+  strip.setPixelColor(i * 32 + 17, strip.Color(127, 0, 127));
+  strip.setPixelColor(i * 32 + 18, strip.Color(45, 45, 45));
+  strip.setPixelColor(i * 32 + 19, strip.Color(0, 0, 0));
+  strip.setPixelColor(i * 32 + 20, strip.Color(127, 127, 127));
+  strip.setPixelColor(i * 32 + 21, strip.Color(127, 0, 0));
+  strip.setPixelColor(i * 32 + 22, strip.Color(127, 127, 0));
+  strip.setPixelColor(i * 32 + 23, strip.Color(0, 127, 0));
+  strip.setPixelColor(i * 32 + 24, strip.Color(0, 127, 127));
+  strip.setPixelColor(i * 32 + 25, strip.Color(0, 0, 127));
+  strip.setPixelColor(i * 32 + 26, strip.Color(127, 0, 0));
+  strip.setPixelColor(i * 32 + 27, strip.Color(127, 0, 127));
+  strip.setPixelColor(i * 32 + 28, strip.Color(45, 45, 45));
+  strip.setPixelColor(i * 32 + 29, strip.Color(0, 0, 0));
+  strip.setPixelColor(i * 32 + 30, strip.Color(127, 127, 127));
+  strip.setPixelColor(i * 32 + 31, strip.Color(127, 0, 0));
   }
+  strip.show(); 
 }
 
 // Cycle through the color wheel, equally spaced around the belt
