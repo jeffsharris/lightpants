@@ -42,74 +42,83 @@ void candyCane(uint32_t c1, uint32_t c2, uint8_t len, uint8_t wait);
 void colorChase(uint32_t c, uint8_t wait);
 void colorWipe(uint32_t c, uint8_t wait);
 void dither(uint32_t c, uint8_t wait);
+void merge(uint32_t c1, uint32_t c2, boolean fromEdges, uint8_t wait);
+void rainbowCycle(uint8_t wait);
+void rainbowCycleWave(uint8_t wait);
 void scanner(uint8_t r, uint8_t g, uint8_t b, uint8_t wait);
 void spiralDown(uint32_t c, uint8_t wait);
 void spiralUp(uint32_t c, uint8_t wait);
 void stack(uint32_t c1, uint32_t c2, boolean downDirection, uint8_t wait);
 void wave(uint32_t c, int cycles, uint8_t wait);
-void rainbowCycle(uint8_t wait);
-void rainbowCycleWave(uint8_t wait);
 uint32_t Wheel(uint16_t WheelPos);
 
 void loop() {
-  //rainbowCycleWave(0);
+  merge(strip.Color(127, 0, 0), strip.Color(127, 127, 127), true, 20); // red on white
+  merge(strip.Color(127, 127, 0), strip.Color(127, 0, 0), false, 20); // yellow on red 
+  merge(strip.Color(0, 127, 0), strip.Color(127, 127, 0), true, 20); // green on yellow
+  merge(strip.Color(0, 127, 127), strip.Color(0, 127, 0), false, 20); // cyan on green
+  merge(strip.Color(0, 0, 127), strip.Color(0, 127, 127), true, 20); // blue on cyan
+  merge(strip.Color(127, 0, 127), strip.Color(0, 0, 127), false, 20); // magenta on blue
+  merge(strip.Color(127, 127, 127), strip.Color(127, 0, 127), true, 20); // white on magenta  
   
-  stack(strip.Color(127, 0, 0), strip.Color(127, 127, 127), true, 5); // red stacking on white
-  stack(strip.Color(127, 127, 0), strip.Color(127, 0, 0), false, 5); // yellow stacking on red 
-  stack(strip.Color(0, 127, 0), strip.Color(127, 127, 0), true, 5); // green stacking on yellow
-  stack(strip.Color(0, 127, 127), strip.Color(0, 127, 0), false, 5); // cyan stacking on green
-  stack(strip.Color(0, 0, 127), strip.Color(0, 127, 127), true, 5); // blue stacking on cyan
-  stack(strip.Color(127, 0, 127), strip.Color(0, 0, 127), false, 5); // magenta stacking on blue
-  stack(strip.Color(127, 127, 127), strip.Color(127, 0, 127), true, 5); // white stacking on magenta  
-  
-  candyCane(strip.Color(127,0,0), strip.Color(127, 127, 127), 3, 7, 100); // red + white
-  candyCane(strip.Color(127,127,0), strip.Color(127, 0, 0), 3, 7, 100); // yellow + red
-  candyCane(strip.Color(127,127,0), strip.Color(0, 127, 0), 3, 7, 100); // yellow + green
-  candyCane(strip.Color(0,127,0), strip.Color(0, 127, 127), 3, 7, 100); // green + cyan
-  candyCane(strip.Color(0,127,127), strip.Color(0, 0, 127), 3, 7, 100); // cyan + blue
-  candyCane(strip.Color(0,0,127), strip.Color(127, 0, 127), 3, 7, 100); // blue + magenta
- 
-  spiral(strip.Color(127,127,127), true, 20); // white
-  spiral(strip.Color(127,0,0), false, 20);     // red
-  spiral(strip.Color(127,127,0), true, 20);   // yellow
-  spiral(strip.Color(0,127,0), false, 20);     // green
-  spiral(strip.Color(0,127,127), true, 20);   // cyan
-  spiral(strip.Color(0,0,127), false, 20);     // blue
-  spiral(strip.Color(127,0,127), true, 20);   // magenta
-  
-    // Fill the entire strip with...
-  colorWipe(strip.Color(127,0,0), 20);      // red
-  colorWipe(strip.Color(0, 127,0), 20);     // green
-  colorWipe(strip.Color(0,0,127), 20);      // blue
-  colorWipe(strip.Color(0,0,0), 20);        // black
-
-  // Color sparkles
-  dither(strip.Color(0,127,127), 50);       // cyan, slow
-  dither(strip.Color(0,0,0), 15);           // black, fast
-  dither(strip.Color(127,0,127), 50);       // magenta, slow
-  dither(strip.Color(0,0,0), 15);           // black, fast
-  dither(strip.Color(127,127,0), 50);       // yellow, slow
-  dither(strip.Color(0,0,0), 15);           // black, fast
-  
-  // Spirals
-  spiral(strip.Color(127,127,127), true, 20); // white
-  spiral(strip.Color(127,0,0), false, 20);     // red
-  spiral(strip.Color(127,127,0), true, 20);   // yellow
-  spiral(strip.Color(0,127,0), false, 20);     // green
-  spiral(strip.Color(0,127,127), true, 20);   // cyan
-  spiral(strip.Color(0,0,127), false, 20);     // blue
-  spiral(strip.Color(127,0,127), true, 20);   // magenta
-
-  // Back-and-forth lights
-  scanner(127,0,0, 30);        // red, slow
-  scanner(0,0,127, 15);        // blue, fast
-
-  // Wavy ripple effects
-  wave(strip.Color(127,0,0), 4, 20);        // candy cane
-  wave(strip.Color(0,0,100), 2, 40);        // icy
-
-  // make a pretty rainbow cycle!
-  rainbowCycle(0);  // make it go through the cycle fairly fast
+//  rainbowCycleWave(0);
+//  
+//  stack(strip.Color(127, 0, 0), strip.Color(127, 127, 127), true, 5); // red stacking on white
+//  stack(strip.Color(127, 127, 0), strip.Color(127, 0, 0), false, 5); // yellow stacking on red 
+//  stack(strip.Color(0, 127, 0), strip.Color(127, 127, 0), true, 5); // green stacking on yellow
+//  stack(strip.Color(0, 127, 127), strip.Color(0, 127, 0), false, 5); // cyan stacking on green
+//  stack(strip.Color(0, 0, 127), strip.Color(0, 127, 127), true, 5); // blue stacking on cyan
+//  stack(strip.Color(127, 0, 127), strip.Color(0, 0, 127), false, 5); // magenta stacking on blue
+//  stack(strip.Color(127, 127, 127), strip.Color(127, 0, 127), true, 5); // white stacking on magenta  
+//  
+//  candyCane(strip.Color(127,0,0), strip.Color(127, 127, 127), 3, 7, 100); // red + white
+//  candyCane(strip.Color(127,127,0), strip.Color(127, 0, 0), 3, 7, 100); // yellow + red
+//  candyCane(strip.Color(127,127,0), strip.Color(0, 127, 0), 3, 7, 100); // yellow + green
+//  candyCane(strip.Color(0,127,0), strip.Color(0, 127, 127), 3, 7, 100); // green + cyan
+//  candyCane(strip.Color(0,127,127), strip.Color(0, 0, 127), 3, 7, 100); // cyan + blue
+//  candyCane(strip.Color(0,0,127), strip.Color(127, 0, 127), 3, 7, 100); // blue + magenta
+// 
+//  spiral(strip.Color(127,127,127), true, 20); // white
+//  spiral(strip.Color(127,0,0), false, 20);     // red
+//  spiral(strip.Color(127,127,0), true, 20);   // yellow
+//  spiral(strip.Color(0,127,0), false, 20);     // green
+//  spiral(strip.Color(0,127,127), true, 20);   // cyan
+//  spiral(strip.Color(0,0,127), false, 20);     // blue
+//  spiral(strip.Color(127,0,127), true, 20);   // magenta
+//  
+//    // Fill the entire strip with...
+//  colorWipe(strip.Color(127,0,0), 20);      // red
+//  colorWipe(strip.Color(0, 127,0), 20);     // green
+//  colorWipe(strip.Color(0,0,127), 20);      // blue
+//  colorWipe(strip.Color(0,0,0), 20);        // black
+//
+//  // Color sparkles
+//  dither(strip.Color(0,127,127), 50);       // cyan, slow
+//  dither(strip.Color(0,0,0), 15);           // black, fast
+//  dither(strip.Color(127,0,127), 50);       // magenta, slow
+//  dither(strip.Color(0,0,0), 15);           // black, fast
+//  dither(strip.Color(127,127,0), 50);       // yellow, slow
+//  dither(strip.Color(0,0,0), 15);           // black, fast
+//  
+//  // Spirals
+//  spiral(strip.Color(127,127,127), true, 20); // white
+//  spiral(strip.Color(127,0,0), false, 20);     // red
+//  spiral(strip.Color(127,127,0), true, 20);   // yellow
+//  spiral(strip.Color(0,127,0), false, 20);     // green
+//  spiral(strip.Color(0,127,127), true, 20);   // cyan
+//  spiral(strip.Color(0,0,127), false, 20);     // blue
+//  spiral(strip.Color(127,0,127), true, 20);   // magenta
+//
+//  // Back-and-forth lights
+//  scanner(127,0,0, 30);        // red, slow
+//  scanner(0,0,127, 15);        // blue, fast
+//
+//  // Wavy ripple effects
+//  wave(strip.Color(127,0,0), 4, 20);        // candy cane
+//  wave(strip.Color(0,0,100), 2, 40);        // icy
+//
+//  // make a pretty rainbow cycle!
+//  rainbowCycle(0);  // make it go through the cycle fairly fast
   
   for (int i=0; i < strip.numPixels(); i++) {
     strip.setPixelColor(i, 0);
@@ -247,6 +256,34 @@ void spiral(uint32_t c, boolean downDirection, uint8_t wait) {
       delay(wait);
     }
   }       
+}
+
+// Lights merge together either from top and bottom or apart from middle
+void merge(uint32_t c1, uint32_t c2, boolean fromEdges, uint8_t wait) {
+  for (int i = 0; i < strip.numPixels(); i++) {
+    strip.setPixelColor(i, c2);
+  }
+  strip.show();
+  delay(wait);  
+  if (fromEdges) {
+    for (int i = 0, j = LEG_LENGTH - 1; i < j; i++, j--) {
+      for (int k = 0; k < N_STRIPS; k++) {
+        strip.setPixelColor(lights[k][i], c1);
+        strip.setPixelColor(lights[k][j], c1);
+      }
+    strip.show();
+    delay(wait); 
+    }
+  } else {
+    for (int i = (LEG_LENGTH / 2) - 1, j = LEG_LENGTH / 2; i >=0; i--, j++) {
+      for (int k = 0; k < N_STRIPS; k++) {
+        strip.setPixelColor(lights[k][i], c1);
+        strip.setPixelColor(lights[k][j], c1);
+      }
+      strip.show();
+      delay(wait);       
+    }
+  }  
 }
 
 // Create a stack of colors in either up or down direction
