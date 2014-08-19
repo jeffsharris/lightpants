@@ -52,6 +52,8 @@ void rainbowCycleWave(uint8_t wait);
 uint32_t Wheel(uint16_t WheelPos);
 
 void loop() {
+  //rainbowCycleWave(0);
+  
   stack(strip.Color(127, 0, 0), strip.Color(127, 127, 127), true, 5); // red stacking on white
   stack(strip.Color(127, 127, 0), strip.Color(127, 0, 0), false, 5); // yellow stacking on red 
   stack(strip.Color(0, 127, 0), strip.Color(127, 127, 0), true, 5); // green stacking on yellow
@@ -59,8 +61,6 @@ void loop() {
   stack(strip.Color(0, 0, 127), strip.Color(0, 127, 127), true, 5); // blue stacking on cyan
   stack(strip.Color(127, 0, 127), strip.Color(0, 0, 127), false, 5); // magenta stacking on blue
   stack(strip.Color(127, 127, 127), strip.Color(127, 0, 127), true, 5); // white stacking on magenta  
-  
-  rainbowCycleWave(0);
   
   candyCane(strip.Color(127,0,0), strip.Color(127, 127, 127), 3, 7, 100); // red + white
   candyCane(strip.Color(127,127,0), strip.Color(127, 0, 0), 3, 7, 100); // yellow + red
@@ -277,7 +277,7 @@ void stack(uint32_t c1, uint32_t c2, boolean downDirection, uint8_t wait) {
       }
       strip.show();
       delay(wait);
-      for (int i = LEG_LENGTH - 2; i >= 0; i--) { // Move the colored row up
+      for (int i = LEG_LENGTH - 2; i >= min; i--) { // Move the colored row up
         for (int j = 0; j < N_STRIPS; j++) {
           strip.setPixelColor(lights[j][i], c1); // Move the row down
           strip.setPixelColor(lights[j][i+1], c2); // Clear the previous row
