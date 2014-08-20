@@ -19,6 +19,7 @@ int clockPin = 15;
 #define N_LEDS       128
 #define LEG_LENGTH   32
 #define N_STRIPS     4
+#define N_COLORS     7
 
 // Set the first variable to the NUMBER of pixels. 32 = 32 pixels in a row
 // The LED strips are 32 LEDs per meter but you can extend/cut the strip
@@ -29,6 +30,7 @@ int lights[][32] = { {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
                      {64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95},
                      {127, 126, 125, 124, 123, 122, 121, 120, 119, 118, 117, 116, 115, 114, 113, 112, 111, 110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96} };
                   
+uint32_t colors[] = { strip.Color(127, 0, 0), strip.Color(127, 127, 0), strip.Color(0, 127, 0), strip.Color(0, 127, 127), strip.Color(0, 0, 127), strip.Color(127, 0, 127), strip.Color(127, 127, 127) };
 
 void setup() {
   // Start up the LED strip
@@ -55,65 +57,36 @@ uint32_t Wheel(uint16_t WheelPos);
 
 void loop() {
 rainbowCycleWave(0);
-merge(strip.Color(127, 0, 0), strip.Color(127, 127, 127), true, 20); // red on white
-merge(strip.Color(127, 127, 0), strip.Color(127, 0, 0), false, 20); // yellow on red 
-merge(strip.Color(0, 127, 0), strip.Color(127, 127, 0), true, 20); // green on yellow
-merge(strip.Color(0, 127, 127), strip.Color(0, 127, 0), false, 20); // cyan on green
-merge(strip.Color(0, 0, 127), strip.Color(0, 127, 127), true, 20); // blue on cyan
-merge(strip.Color(127, 0, 127), strip.Color(0, 0, 127), false, 20); // magenta on blue
-merge(strip.Color(127, 127, 127), strip.Color(127, 0, 127), true, 20); // white on magenta  
-  
 
-  
-stack(strip.Color(127, 0, 0), strip.Color(127, 127, 127), true, 5); // red stacking on white
-stack(strip.Color(127, 127, 0), strip.Color(127, 0, 0), false, 5); // yellow stacking on red 
-stack(strip.Color(0, 127, 0), strip.Color(127, 127, 0), true, 5); // green stacking on yellow
-stack(strip.Color(0, 127, 127), strip.Color(0, 127, 0), false, 5); // cyan stacking on green
-stack(strip.Color(0, 0, 127), strip.Color(0, 127, 127), true, 5); // blue stacking on cyan
-stack(strip.Color(127, 0, 127), strip.Color(0, 0, 127), false, 5); // magenta stacking on blue
-stack(strip.Color(127, 127, 127), strip.Color(127, 0, 127), true, 5); // white stacking on magenta  
-  
-candyCane(strip.Color(127,0,0), strip.Color(127, 127, 127), 3, 7, 100); // red + white
-candyCane(strip.Color(127,127,0), strip.Color(127, 0, 0), 3, 7, 100); // yellow + red
-candyCane(strip.Color(127,127,0), strip.Color(0, 127, 0), 3, 7, 100); // yellow + green
-candyCane(strip.Color(0,127,0), strip.Color(0, 127, 127), 3, 7, 100); // green + cyan
-candyCane(strip.Color(0,127,127), strip.Color(0, 0, 127), 3, 7, 100); // cyan + blue
-candyCane(strip.Color(0,0,127), strip.Color(127, 0, 127), 3, 7, 100); // blue + magenta
- 
-spiral(strip.Color(127,127,127), true, 20); // white
-spiral(strip.Color(127,0,0), false, 20);     // red
-spiral(strip.Color(127,127,0), true, 20);   // yellow
-spiral(strip.Color(0,127,0), false, 20);     // green
-spiral(strip.Color(0,127,127), true, 20);   // cyan
-spiral(strip.Color(0,0,127), false, 20);     // blue
-spiral(strip.Color(127,0,127), true, 20);   // magenta
+for (int i = 0; i < N_COLORS; i++ ) {
+  merge(colors[i], colors[(i - 1) % N_COLORS], i % 2, 20);
+}
+
+for (int i = 0; i < N_COLORS; i++) {
+  stack(colors[i], colors[(i - 1) % N_COLORS], i % 2, 5); // This code is BUGGY. The backgrounds aren't transitioning well
+}
+
+for (int i = 0; i < N_COLORS; i++) {
+  candyCane(colors[i], colors[(i - 1) % N_COLORS], 3, 7, 100);
+}
+
+for (int i = 0; i < N_COLORS; i++) {
+  spiral(colors[i], i % 2, 20);
+}  
  
 // Fill the entire strip with...
-colorWipe(strip.Color(127,0,0), 20);      // red
-colorWipe(strip.Color(0, 127,0), 20);     // green
-colorWipe(strip.Color(0,0,127), 20);      // blue
-colorWipe(strip.Color(0,0,0), 20);        // black
+for (int i = 0; i < N_COLORS; i++) {
+  colorWipe(colors[i], 20);
+}
 
 // Color sparkles
-dither(strip.Color(0,127,127), 50);       // cyan, slow
-dither(strip.Color(0,0,0), 15);           // black, fast
-dither(strip.Color(127,0,127), 50);       // magenta, slow
-dither(strip.Color(0,0,0), 15);           // black, fast
-dither(strip.Color(127,127,0), 50);       // yellow, slow
-dither(strip.Color(0,0,0), 15);           // black, fast
+for (int i = 0; i < N_COLORS; i++) {
+  dither(colors[i], random(50));
+}
   
-// Spirals
-spiral(strip.Color(127,127,127), true, 20); // white
-spiral(strip.Color(127,0,0), false, 20);     // red
-spiral(strip.Color(127,127,0), true, 20);   // yellow
-spiral(strip.Color(0,127,0), false, 20);     // green
-spiral(strip.Color(0,127,127), true, 20);   // cyan
-spiral(strip.Color(0,0,127), false, 20);     // blue
-spiral(strip.Color(127,0,127), true, 20);   // magenta
-
-// Back-and-forth lights
-scanner(127,0,0, 30);        // red, slow
-scanner(0,0,127, 15);        // blue, fast
+for (int i = 0; i < N_COLORS; i++) {
+  scanner(colors[i], random(30));
+}  
 
 //Wavy ripple effects
 wave(strip.Color(127,0,0), 4, 20);        // candy cane
