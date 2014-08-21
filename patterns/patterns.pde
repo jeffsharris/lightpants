@@ -58,17 +58,21 @@ uint32_t Wheel(uint16_t WheelPos);
 
 void loop() {
 
+for (int j = 0; j < 10; j++) {
+  for (int i = 1; i <= N_COLORS; i++ ) {
+    merge(colors[i % N_COLORS], colors[(i - 1) % N_COLORS], (j + i) % 2, 20);
+  }
+}
+  
+  
 rainbowJump(20, true);
 rainbowJump(20, false);
 
 rainbowCycleWave(0);
 
-for (int i = 0; i < N_COLORS; i++ ) {
-  merge(colors[i], colors[(i - 1) % N_COLORS], i % 2, 20);
-}
 
 for (int i = 0; i < N_COLORS; i++) {
-  stack(colors[i], colors[(i - 1) % N_COLORS], i % 2, 5); // This code is BUGGY. The backgrounds aren't transitioning well
+  stack(colors[i], colors[(i - 1) % N_COLORS], i % 2, 5);
 }
 
 for (int i = 0; i < N_COLORS; i++) {
