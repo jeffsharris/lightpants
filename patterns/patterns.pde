@@ -59,6 +59,7 @@ uint32_t Wheel(uint16_t WheelPos);
 
 void loop() {
 
+  
 rainbowCycleWave(0);
   
 for (int j = 0; j < 10; j++) {
@@ -66,10 +67,13 @@ for (int j = 0; j < 10; j++) {
     merge(colors[i % N_COLORS], colors[(i - 1) % N_COLORS], (j + i) % 2, 20);
   }
 }
+
+rainbowJump(20, true, true);
+rainbowJump(20, true, false);
+rainbowJump(20, false, true);
+rainbowJump(20, true, true);
   
   
-rainbowJump(20, true);
-rainbowJump(20, false);
 
 
 
@@ -290,36 +294,43 @@ void rainbowDither(uint8_t wait) {
 }
 
 // Create a rainbow pattern that moves from up/down the pants and jumps from one end to another
-void rainbowJump(uint8_t wait, boolean downDirection) {
+void rainbowJump(uint8_t wait, boolean rightLegDownDirection, boolean leftLegDownDirection) {
   for (int i = 0; i < strip.numPixels(); i++) {
     strip.setPixelColor(i, strip.Color(127, 127, 127));
   }
-  if (downDirection) {
-    for (int i = 0; i < 315 ; i++) {
-      for (int j = 0; j < N_COLORS - 1; j++) { // (N_COLORS-1) to avoid using the white final color
-        for (int k = 0; k < N_STRIPS; k++) {
-          strip.setPixelColor(lights[k][(i+j) % LEG_LENGTH], colors[j]);
-        }
+  for (int i = 0, j = 314; i < 315 && j >=0; i++, j--) {
+    for (int k = 0; k < N_COLORS - 1; k++) { // (N_COLORS-1) to avoid using the white final color. This could probably be cleaned up by taking advantage of the white fill color being in this array
+      if (rightLegDownDirection) {
+        strip.setPixelColor(lights[0][(i+k) % LEG_LENGTH], colors[k]);
+        strip.setPixelColor(lights[1][(i+k) % LEG_LENGTH], colors[k]);
+      } else {
+        strip.setPixelColor(lights[0][(j+k) % LEG_LENGTH], colors[k]);
+        strip.setPixelColor(lights[1][(j+k) % LEG_LENGTH], colors[k]);
       }
-      for (int k = 0; k < N_STRIPS; k++) {
-        strip.setPixelColor(lights[k][(i - 1) % LEG_LENGTH], strip.Color(127, 127, 127));
-      }  
-      strip.show();
-      delay(wait);
+      if (leftLegDownDirection) {
+        strip.setPixelColor(lights[2][(i+k) % LEG_LENGTH], colors[k]);
+        strip.setPixelColor(lights[3][(i+k) % LEG_LENGTH], colors[k]);
+      } else {
+        strip.setPixelColor(lights[2][(j+k) % LEG_LENGTH], colors[k]);
+        strip.setPixelColor(lights[3][(j+k) % LEG_LENGTH], colors[k]);
+      }
     }
-  } else {
-    for (int i = 314; i >= 0; i--) {
-      for (int j = 0; j < N_COLORS - 1; j++) {
-        for (int k = 0; k < N_STRIPS; k++) {
-          strip.setPixelColor(lights[k][(i+j) % LEG_LENGTH], colors[j]);
-        }
-      }
-      for (int k = 0; k < N_STRIPS; k++) {
-        strip.setPixelColor(lights[k][(i + N_COLORS - 1) % LEG_LENGTH], strip.Color(127, 127, 127));
-      }
-      strip.show();
-      delay(wait);
+    if (rightLegDownDirection) {
+      strip.setPixelColor(lights[0][(i-1) % LEG_LENGTH], strip.Color(127, 127, 127));
+      strip.setPixelColor(lights[1][(i-1) % LEG_LENGTH], strip.Color(127, 127, 127));
+    } else {
+      strip.setPixelColor(lights[0][(j + N_COLORS - 1) % LEG_LENGTH], strip.Color(127, 127, 127));
+      strip.setPixelColor(lights[1][(j + N_COLORS - 1) % LEG_LENGTH], strip.Color(127, 127, 127));
     }
+    if (leftLegDownDirection) {
+      strip.setPixelColor(lights[2][(i-1) % LEG_LENGTH], strip.Color(127, 127, 127));
+      strip.setPixelColor(lights[3][(i-1) % LEG_LENGTH], strip.Color(127, 127, 127));
+    } else {
+      strip.setPixelColor(lights[2][(j + N_COLORS - 1) % LEG_LENGTH], strip.Color(127, 127, 127));
+      strip.setPixelColor(lights[3][(j + N_COLORS - 1) % LEG_LENGTH], strip.Color(127, 127, 127));
+    }
+    strip.show();
+    delay(wait);
   }
 }
 // Cycle through the color wheel, equally spaced around the belt
