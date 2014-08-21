@@ -48,6 +48,7 @@ void dither(uint32_t c, uint8_t wait);
 void merge(uint32_t c1, uint32_t c2, boolean fromEdges, uint8_t wait);
 void rainbowCycle(uint8_t wait);
 void rainbowCycleWave(uint8_t wait);
+void rainbowJump(uint8_t wait, boolean downDirection);
 void scanner(uint8_t r, uint8_t g, uint8_t b, uint8_t wait);
 void spiralDown(uint32_t c, uint8_t wait);
 void spiralUp(uint32_t c, uint8_t wait);
@@ -56,6 +57,10 @@ void wave(uint32_t c, int cycles, uint8_t wait);
 uint32_t Wheel(uint16_t WheelPos);
 
 void loop() {
+
+rainbowJump(20, true);
+rainbowJump(20, false);
+
 rainbowCycleWave(0);
 
 for (int i = 0; i < N_COLORS; i++ ) {
@@ -84,9 +89,8 @@ for (int i = 0; i < N_COLORS; i++) {
   dither(colors[i], random(50));
 }
   
-for (int i = 0; i < N_COLORS; i++) {
-  scanner(colors[i], random(30));
-}  
+scanner(127,0,0, 30);        // red, slow
+scanner(0,0,127, 15);        // blue, fast
 
 //Wavy ripple effects
 wave(strip.Color(127,0,0), 4, 20);        // candy cane
@@ -246,6 +250,39 @@ void merge(uint32_t c1, uint32_t c2, boolean fromEdges, uint8_t wait) {
   }  
 }
 
+// Create a rainbow pattern that moves from up/down the pants and jumps from one end to another
+void rainbowJump(uint8_t wait, boolean downDirection) {
+  for (int i = 0; i < strip.numPixels(); i++) {
+    strip.setPixelColor(i, strip.Color(127, 127, 127));
+  }
+  if (downDirection) {
+    for (int i = 0; i < 315 ; i++) {
+      for (int j = 0; j < N_COLORS - 1; j++) { // (N_COLORS-1) to avoid using the white final color
+        for (int k = 0; k < N_STRIPS; k++) {
+          strip.setPixelColor(lights[k][(i+j) % LEG_LENGTH], colors[j]);
+        }
+      }
+      for (int k = 0; k < N_STRIPS; k++) {
+        strip.setPixelColor(lights[k][(i - 1) % LEG_LENGTH], strip.Color(127, 127, 127));
+      }  
+      strip.show();
+      delay(wait);
+    }
+  } else {
+    for (int i = 314; i >= 0; i--) {
+      for (int j = 0; j < N_COLORS - 1; j++) {
+        for (int k = 0; k < N_STRIPS; k++) {
+          strip.setPixelColor(lights[k][(i+j) % LEG_LENGTH], colors[j]);
+        }
+      }
+      for (int k = 0; k < N_STRIPS; k++) {
+        strip.setPixelColor(lights[k][(i + N_COLORS - 1) % LEG_LENGTH], strip.Color(127, 127, 127));
+      }
+      strip.show();
+      delay(wait);
+    }
+  }
+}
 // Cycle through the color wheel, equally spaced around the belt
 void rainbowCycle(uint8_t wait) {
   uint16_t i, j;
