@@ -46,6 +46,7 @@ void colorChase(uint32_t c, uint8_t wait);
 void colorWipe(uint32_t c, uint8_t wait);
 void dither(uint32_t c, uint8_t wait);
 void merge(uint32_t c1, uint32_t c2, boolean fromEdges, uint8_t wait);
+void rainbowDither(uint8_t wait);
 void rainbowCycle(uint8_t wait);
 void rainbowCycleWave(uint8_t wait);
 void rainbowJump(uint8_t wait, boolean downDirection);
@@ -58,6 +59,8 @@ uint32_t Wheel(uint16_t WheelPos);
 
 void loop() {
 
+rainbowCycleWave(0);
+  
 for (int j = 0; j < 10; j++) {
   for (int i = 1; i <= N_COLORS; i++ ) {
     merge(colors[i % N_COLORS], colors[(i - 1) % N_COLORS], (j + i) % 2, 20);
@@ -68,7 +71,7 @@ for (int j = 0; j < 10; j++) {
 rainbowJump(20, true);
 rainbowJump(20, false);
 
-rainbowCycleWave(0);
+
 
 
 for (int i = 0; i < N_COLORS; i++) {
@@ -77,6 +80,11 @@ for (int i = 0; i < N_COLORS; i++) {
 
 for (int i = 0; i < N_COLORS; i++) {
   candyCane(colors[i], colors[(i - 1) % N_COLORS], 3, 7, 100);
+}
+
+// Color sparkles
+for (int i = 0; i < N_COLORS; i++) {
+  dither(colors[i], random(50));
 }
 
 for (int i = 0; i < N_COLORS; i++) {
@@ -88,9 +96,9 @@ for (int i = 0; i < N_COLORS; i++) {
   colorWipe(colors[i], 20);
 }
 
-// Color sparkles
-for (int i = 0; i < N_COLORS; i++) {
-  dither(colors[i], random(50));
+for (int i = 0; i < 5; i++) {
+  rainbowDither(10);
+  dither(strip.Color(0, 0, 0), 10);
 }
   
 scanner(127,0,0, 30);        // red, slow
@@ -252,6 +260,33 @@ void merge(uint32_t c1, uint32_t c2, boolean fromEdges, uint8_t wait) {
       delay(wait);       
     }
   }  
+}
+
+// An "ordered dither" fills every pixel in a sequence that looks
+// sparkly and almost random, but actually follows a specific order.
+// This pattern uses a random assortment of colors.
+void rainbowDither(uint8_t wait) {
+
+  // Determine highest bit needed to represent pixel index
+  int hiBit = 0;
+  int n = strip.numPixels() - 1;
+  for(int bit=1; bit < 0x8000; bit <<= 1) {
+    if(n & bit) hiBit = bit;
+  }
+
+  int bit, reverse;
+  for(int i=0; i<(hiBit << 1); i++) {
+    // Reverse the bits in i to create ordered dither:
+    reverse = 0;
+    for(bit=1; bit <= hiBit; bit <<= 1) {
+      reverse <<= 1;
+      if(i & bit) reverse |= 1;
+    }
+    strip.setPixelColor(reverse, colors[random(N_COLORS)]);
+    strip.show();
+    delay(wait);
+  }
+  delay(250); // Hold image for 1/4 sec
 }
 
 // Create a rainbow pattern that moves from up/down the pants and jumps from one end to another
