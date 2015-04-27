@@ -41,7 +41,7 @@ void setup() {
 }
 
 // function prototypes, do not remove these!
-void candyCane(uint32_t c1, uint32_t c2, uint8_t len, uint8_t wait);
+void candyCane(uint32_t c1, uint32_t c2, uint8_t len, uint8_t space, uint8_t wait);
 void colorChase(uint32_t c, uint8_t wait);
 void colorWipe(uint32_t c, uint8_t wait);
 void dither(uint32_t c, uint8_t wait);
@@ -49,10 +49,9 @@ void merge(uint32_t c1, uint32_t c2, boolean fromEdges, uint8_t wait);
 void rainbowDither(uint8_t wait);
 void rainbowCycle(uint8_t wait);
 void rainbowCycleWave(uint8_t wait);
-void rainbowJump(uint8_t wait, boolean downDirection);
+void rainbowJump(uint8_t wait, boolean rightDirection, boolean leftDirection);
 void scanner(uint8_t r, uint8_t g, uint8_t b, uint8_t wait);
-void spiralDown(uint32_t c, uint8_t wait);
-void spiralUp(uint32_t c, uint8_t wait);
+void spiral(uint32_t c, boolean downDirection, uint8_t wait);
 void stack(uint32_t c1, uint32_t c2, boolean downDirection, uint8_t wait);
 void wave(uint32_t c, int cycles, uint8_t wait);
 uint32_t Wheel(uint16_t WheelPos);
