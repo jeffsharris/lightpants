@@ -61,10 +61,11 @@ uint32_t Wheel(uint16_t WheelPos);
 
 void loop() {
 //rainbowJump(10);
-sweep(40, 100);
+sweep(40, 300);
+rainbowCycleWave(0);
 dither(10);
   
-rainbowCycleWave(0);
+
  
 colorChase(strip.Color(127, 0, 0), 10); 
 
