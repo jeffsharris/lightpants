@@ -16,8 +16,10 @@ int dataPin = 16;
 int clockPin = 15;
 #endif
 
-#define N_LEDS       123
+#define N_LEDS       122
 #define LEG_LENGTH   32
+#define LED_PER_ROW  18
+#define N_ROWS       7
 #define N_STRIPS     4
 #define N_COLORS     7
 
@@ -44,141 +46,43 @@ void setup() {
 void candyCane(uint32_t c1, uint32_t c2, uint8_t len, uint8_t space, uint8_t wait);
 void colorChase(uint32_t c, uint8_t wait);
 void colorWipe(uint32_t c, uint8_t wait);
-void dither(uint32_t c, uint8_t wait);
+void dither(uint8_t wait);
 void merge(uint32_t c1, uint32_t c2, boolean fromEdges, uint8_t wait);
 void rainbowDither(uint8_t wait);
 void rainbowCycle(uint8_t wait);
 void rainbowCycleWave(uint8_t wait);
-void rainbowJump(uint8_t wait, boolean rightDirection, boolean leftDirection);
+void rainbowJump(uint8_t wait);
 void scanner(uint8_t r, uint8_t g, uint8_t b, uint8_t wait);
 void spiral(uint32_t c, boolean downDirection, uint8_t wait);
 void stack(uint32_t c1, uint32_t c2, boolean downDirection, uint8_t wait);
+void sweep(uint8_t wait, uint32_t spins);
 void wave(uint32_t c, int cycles, uint8_t wait);
 uint32_t Wheel(uint16_t WheelPos);
 
 void loop() {
-
+//rainbowJump(10);
+sweep(40, 100);
+dither(10);
   
 rainbowCycleWave(0);
+ 
+colorChase(strip.Color(127, 0, 0), 10); 
+
   
-//for (int j = 0; j < 10; j++) {
-//  for (int i = 1; i <= N_COLORS; i++ ) {
-//    merge(colors[i % N_COLORS], colors[(i - 1) % N_COLORS], (j + i) % 2, 20);
-//  }
-//}
-//
-//rainbowJump(20, true, true);
-//rainbowJump(20, true, false);
-//rainbowJump(20, false, true);
-//rainbowJump(20, true, true);
-//  
-//  
-//
-//
-//
-//
-//for (int i = 0; i < N_COLORS; i++) {
-//  stack(colors[i], colors[(i - 1) % N_COLORS], i % 2, 5);
-//}
-//
-//for (int i = 0; i < N_COLORS; i++) {
-//  candyCane(colors[i], colors[(i - 1) % N_COLORS], 3, 7, 100);
-//}
-//
-//// Color sparkles
-//for (int i = 0; i < N_COLORS; i++) {
-//  dither(colors[i], random(50));
-//}
-//
-//for (int i = 0; i < N_COLORS; i++) {
-//  spiral(colors[i], i % 2, 20);
-//}  
-// 
-//// Fill the entire strip with...
-//for (int i = 0; i < N_COLORS; i++) {
-//  colorWipe(colors[i], 20);
-//}
-//
-//for (int i = 0; i < 5; i++) {
-//  rainbowDither(10);
-//  dither(strip.Color(0, 0, 0), 10);
-//}
-//  
-//scanner(127,0,0, 30);        // red, slow
-//scanner(0,0,127, 15);        // blue, fast
-//
-////Wavy ripple effects
-//wave(strip.Color(127,0,0), 4, 20);        // candy cane
-//wave(strip.Color(0,0,100), 2, 40);        // icy
-//
-//// make a pretty rainbow cycle!
-//rainbowCycle(0);  // make it go through the cycle fairly fast
-//  
-//  for (int i=0; i < strip.numPixels(); i++) {
-//    strip.setPixelColor(i, 0);
-//  }
-  
-}
-void test() {
-  for (int i = 0; i < N_STRIPS; i++) {
-  strip.setPixelColor(i * 32 + 0, strip.Color(127, 127, 127));
-  strip.setPixelColor(i * 32 + 1, strip.Color(127, 0, 0));
-  strip.setPixelColor(i * 32 + 2, strip.Color(127, 127, 0));
-  strip.setPixelColor(i * 32 + 3, strip.Color(0, 127, 0));
-  strip.setPixelColor(i * 32 + 4, strip.Color(0, 127, 127));
-  strip.setPixelColor(i * 32 + 5, strip.Color(0, 0, 127));
-  strip.setPixelColor(i * 32 + 6, strip.Color(127, 0, 0));
-  strip.setPixelColor(i * 32 + 7, strip.Color(127, 0, 127));
-  strip.setPixelColor(i * 32 + 8, strip.Color(45, 60, 127));
-  strip.setPixelColor(i * 32 + 9, strip.Color(0, 0, 0));
-  strip.setPixelColor(i * 32 + 10, strip.Color(127, 127, 127));
-  strip.setPixelColor(i * 32 + 11, strip.Color(127, 0, 0));
-  strip.setPixelColor(i * 32 + 12, strip.Color(127, 127, 0));
-  strip.setPixelColor(i * 32 + 13, strip.Color(0, 127, 0));
-  strip.setPixelColor(i * 32 + 14, strip.Color(0, 127, 127));
-  strip.setPixelColor(i * 32 + 15, strip.Color(0, 0, 127));
-  strip.setPixelColor(i * 32 + 16, strip.Color(127, 0, 0));
-  strip.setPixelColor(i * 32 + 17, strip.Color(127, 0, 127));
-  strip.setPixelColor(i * 32 + 18, strip.Color(45, 45, 45));
-  strip.setPixelColor(i * 32 + 19, strip.Color(0, 0, 0));
-  strip.setPixelColor(i * 32 + 20, strip.Color(127, 127, 127));
-  strip.setPixelColor(i * 32 + 21, strip.Color(127, 0, 0));
-  strip.setPixelColor(i * 32 + 22, strip.Color(127, 127, 0));
-  strip.setPixelColor(i * 32 + 23, strip.Color(0, 127, 0));
-  strip.setPixelColor(i * 32 + 24, strip.Color(0, 127, 127));
-  strip.setPixelColor(i * 32 + 25, strip.Color(0, 0, 127));
-  strip.setPixelColor(i * 32 + 26, strip.Color(127, 0, 0));
-  strip.setPixelColor(i * 32 + 27, strip.Color(127, 0, 127));
-  strip.setPixelColor(i * 32 + 28, strip.Color(45, 45, 45));
-  strip.setPixelColor(i * 32 + 29, strip.Color(0, 0, 0));
-  strip.setPixelColor(i * 32 + 30, strip.Color(127, 127, 127));
-  strip.setPixelColor(i * 32 + 31, strip.Color(127, 0, 0));
-  }
-  strip.show(); 
 }
 
-// Create a candy cane pattern going down each strip
-void candyCane(uint32_t c1, uint32_t c2, uint8_t len, uint8_t space, uint8_t wait) {
-  uint32_t pixelColor;
-  
-  for (int i = 0; i < LEG_LENGTH; i++) {
-    int location = 0;
-    while (location < LEG_LENGTH) {
-      for (int j = 0; j < len; j++, location++) {
-        for (int k = 0; k < N_STRIPS; k++) {
-          strip.setPixelColor(lights[k][(i + location) % LEG_LENGTH], c1);
-        }
-        
-      }
-      for (int j = 0; j < space; j++, location++) {
-        for (int k = 0; k < N_STRIPS; k++) {
-          strip.setPixelColor(lights[k][(i + location) % LEG_LENGTH], c2);
-        }
+void sweep(uint8_t wait, uint32_t spins) {
+  for (int i = 0; i < spins; i++) {
+    for (int j = 0; j < N_LEDS; j++) {
+      if ((i + j) % LED_PER_ROW < N_COLORS) {
+        strip.setPixelColor(j, colors[(i + j) % LED_PER_ROW]);
+      } else {
+        strip.setPixelColor(j, 0);
       }
     }
     strip.show();
     delay(wait);
-  } 
+  }
 }
 
 // Chase a dot down the strip
@@ -213,7 +117,7 @@ void colorWipe(uint32_t c, uint8_t wait) {
 
 // An "ordered dither" fills every pixel in a sequence that looks
 // sparkly and almost random, but actually follows a specific order.
-void dither(uint32_t c, uint8_t wait) {
+void dither(uint8_t wait) {
 
   // Determine highest bit needed to represent pixel index
   int hiBit = 0;
@@ -230,7 +134,7 @@ void dither(uint32_t c, uint8_t wait) {
       reverse <<= 1;
       if(i & bit) reverse |= 1;
     }
-    strip.setPixelColor(reverse, c);
+    strip.setPixelColor(reverse, colors[random(N_COLORS)]);
     strip.show();
     delay(wait);
   }
@@ -292,42 +196,16 @@ void rainbowDither(uint8_t wait) {
   delay(250); // Hold image for 1/4 sec
 }
 
-// Create a rainbow pattern that moves from up/down the pants and jumps from one end to another
-void rainbowJump(uint8_t wait, boolean rightLegDownDirection, boolean leftLegDownDirection) {
+// Create a rainbow pattern that moves around the hat
+void rainbowJump(uint8_t wait) {
   for (int i = 0; i < strip.numPixels(); i++) {
     strip.setPixelColor(i, strip.Color(127, 127, 127));
   }
   for (int i = 0, j = 314; i < 315 && j >=0; i++, j--) {
     for (int k = 0; k < N_COLORS - 1; k++) { // (N_COLORS-1) to avoid using the white final color. This could probably be cleaned up by taking advantage of the white fill color being in this array
-      if (rightLegDownDirection) {
-        strip.setPixelColor(lights[0][(i+k) % LEG_LENGTH], colors[k]);
-        strip.setPixelColor(lights[1][(i+k) % LEG_LENGTH], colors[k]);
-      } else {
-        strip.setPixelColor(lights[0][(j+k) % LEG_LENGTH], colors[k]);
-        strip.setPixelColor(lights[1][(j+k) % LEG_LENGTH], colors[k]);
-      }
-      if (leftLegDownDirection) {
-        strip.setPixelColor(lights[2][(i+k) % LEG_LENGTH], colors[k]);
-        strip.setPixelColor(lights[3][(i+k) % LEG_LENGTH], colors[k]);
-      } else {
-        strip.setPixelColor(lights[2][(j+k) % LEG_LENGTH], colors[k]);
-        strip.setPixelColor(lights[3][(j+k) % LEG_LENGTH], colors[k]);
-      }
+      strip.setPixelColor((i+k) % N_LEDS, colors[k]);
     }
-    if (rightLegDownDirection) {
-      strip.setPixelColor(lights[0][(i-1) % LEG_LENGTH], strip.Color(127, 127, 127));
-      strip.setPixelColor(lights[1][(i-1) % LEG_LENGTH], strip.Color(127, 127, 127));
-    } else {
-      strip.setPixelColor(lights[0][(j + N_COLORS - 1) % LEG_LENGTH], strip.Color(127, 127, 127));
-      strip.setPixelColor(lights[1][(j + N_COLORS - 1) % LEG_LENGTH], strip.Color(127, 127, 127));
-    }
-    if (leftLegDownDirection) {
-      strip.setPixelColor(lights[2][(i-1) % LEG_LENGTH], strip.Color(127, 127, 127));
-      strip.setPixelColor(lights[3][(i-1) % LEG_LENGTH], strip.Color(127, 127, 127));
-    } else {
-      strip.setPixelColor(lights[2][(j + N_COLORS - 1) % LEG_LENGTH], strip.Color(127, 127, 127));
-      strip.setPixelColor(lights[3][(j + N_COLORS - 1) % LEG_LENGTH], strip.Color(127, 127, 127));
-    }
+    strip.setPixelColor((i-1) % N_LEDS, strip.Color(127, 127, 127));
     strip.show();
     delay(wait);
   }
