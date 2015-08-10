@@ -75,7 +75,7 @@ for (int i = 0; i < N_COLORS; i++) {
 }
 
 for (int i = 0; i < N_COLORS; i++) {
- // candyCane(colors[i], colors[(i - 1) % N_COLORS], 3, 7, 100);
+ candyCane(colors[i], colors[(i - 1) % N_COLORS], 3, 7, 100);
 }
 
 dither(40);
@@ -123,6 +123,30 @@ void sweep(uint8_t wait, uint32_t spins) {
     strip.show();
     delay(wait);
   }
+}
+
+// Create a candy cane pattern going down each strip
+void candyCane(uint32_t c1, uint32_t c2, uint8_t len, uint8_t space, uint8_t wait) {
+  uint32_t pixelColor;
+  
+  for (int i = 0; i < LEG_LENGTH; i++) {
+    int location = 0;
+    while (location < LEG_LENGTH) {
+      for (int j = 0; j < len; j++, location++) {
+        for (int k = 0; k < N_STRIPS; k++) {
+          strip.setPixelColor(lights[k][(i + location) % LEG_LENGTH], c1);
+        }
+        
+      }
+      for (int j = 0; j < space; j++, location++) {
+        for (int k = 0; k < N_STRIPS; k++) {
+          strip.setPixelColor(lights[k][(i + location) % LEG_LENGTH], c2);
+        }
+      }
+    }
+    strip.show();
+    delay(wait);
+  } 
 }
 
 // Chase a dot down the strip
