@@ -60,13 +60,53 @@ void wave(uint32_t c, int cycles, uint8_t wait);
 uint32_t Wheel(uint16_t WheelPos);
 
 void loop() {
-//rainbowJump(10);
-sweep(40, 100);
-dither(10);
-  
 rainbowCycleWave(0);
+  
+for (int j = 0; j < 10; j++) {
+  for (int i = 1; i <= N_COLORS; i++ ) {
+    merge(colors[i % N_COLORS], colors[(i - 1) % N_COLORS], (j + i) % 2, 20);
+  }
+}
+
+rainbowJump(20);
+
+for (int i = 0; i < N_COLORS; i++) {
+  stack(colors[i], colors[(i - 1) % N_COLORS], i % 2, 5);
+}
+
+for (int i = 0; i < N_COLORS; i++) {
+ // candyCane(colors[i], colors[(i - 1) % N_COLORS], 3, 7, 100);
+}
+
+dither(40);
+
+for (int i = 0; i < N_COLORS; i++) {
+  spiral(colors[i], i % 2, 20);
+}  
  
-colorChase(strip.Color(127, 0, 0), 10); 
+// Fill the entire strip with...
+for (int i = 0; i < N_COLORS; i++) {
+  colorWipe(colors[i], 20);
+}
+
+for (int i = 0; i < 5; i++) {
+  rainbowDither(10);
+  dither(10);
+}
+  
+scanner(127,0,0, 30);        // red, slow
+scanner(0,0,127, 15);        // blue, fast
+
+//Wavy ripple effects
+wave(strip.Color(127,0,0), 4, 20);        // candy cane
+wave(strip.Color(0,0,100), 2, 40);        // icy
+
+// make a pretty rainbow cycle!
+rainbowCycle(0);  // make it go through the cycle fairly fast
+  
+  for (int i=0; i < strip.numPixels(); i++) {
+    strip.setPixelColor(i, 0);
+  }
 
   
 }
