@@ -16,7 +16,7 @@ int dataPin = 16;
 int clockPin = 15;
 #endif
 
-#define N_LEDS       122
+#define N_LEDS       128
 #define LEG_LENGTH   32
 #define LED_PER_ROW  18
 #define N_ROWS       7
