@@ -44,24 +44,28 @@ void setup() {
 
 
 void loop() {
-//dither(40);
-//
-//rainbowCycleWave(0);
-//
-//for (int j = 0; j < 10; j++) {
-//  for (int i = 1; i <= N_COLORS; i++ ) {
-//    merge(colors[i % N_COLORS], colors[(i - 1) % N_COLORS], (j + i) % 2, 20);
-//  }
-//}
-//
-//rainbowJump(20);
-//
-//stack(colors[4], 0, 1, 5);
-//for (int i = 0; i < N_COLORS - 2; i++) {
-//  stack(colors[i], colors[(i - 1) % N_COLORS], i % 2, 5);
-//}
-//
-//stack(colors[N_COLORS - 3], colors[(N_COLORS - 4) % N_COLORS], 1, 5);
+dither(40);
+
+rainbowCycleWave(0);
+
+//Wavy ripple effects
+wave(strip.Color(127,0,0), 4, 20);        // candy cane
+wave(strip.Color(0,0,100), 2, 40);        // icy
+
+for (int j = 0; j < 10; j++) {
+  for (int i = 1; i <= N_COLORS; i++ ) {
+    merge(colors[i % N_COLORS], colors[(i - 1) % N_COLORS], (j + i) % 2, 20);
+  }
+}
+
+rainbowJump(20);
+
+stack(colors[4], 0, 1, 5);
+for (int i = 0; i < N_COLORS - 2; i++) {
+  stack(colors[i], colors[(i - 1) % N_COLORS], i % 2, 5);
+}
+
+stack(colors[N_COLORS - 3], colors[(N_COLORS - 4) % N_COLORS], 1, 5);
 for (int i = 0; i < N_COLORS; i++) {
  candyCane(colors[i], colors[(i - 1) % N_COLORS], 3, 7, 100);
 }
@@ -74,50 +78,17 @@ for (int i = 0; i < N_COLORS; i++) {
  
 // Fill the entire strip with...
 for (int i = 0; i < N_COLORS; i++) {
-  colorWipe(colors[i], 20);
+  colorWipe(colors[i], i % 2, 20);
 }
-
-for (int i = 0; i < 5; i++) {
-  rainbowDither(10);
-  dither(10);
-}
-  
-scanner(127,0,0, 30);        // red, slow
-scanner(0,0,127, 15);        // blue, fast
-
-//Wavy ripple effects
-wave(strip.Color(127,0,0), 4, 20);        // candy cane
-wave(strip.Color(0,0,100), 2, 40);        // icy
 
 // make a pretty rainbow cycle!
 rainbowCycle(0);  // make it go through the cycle fairly fast
   
-  for (int i=0; i < strip.numPixels(); i++) {
-    strip.setPixelColor(i, 0);
-  }
-
+rainbowDither(10);
   
 }
 
 
-
-void setRainbowColors() {
-  uint32_t rainbowColors[N_LEDS];  
-  for (int i=0; i < LEG_LENGTH; i++) {
-      // tricky math! we use each pixel as a fraction of the full 384-color
-      // wheel (thats the i / strip.numPixels() part)
-      // Then add in j which makes the colors go around per pixel
-      // the % 384 is to make the wheel cycle around
-      for (int k = 0; k < N_STRIPS; k++) {
-        rainbowColors[lights[k][i]] = Wheel(((i * 384 / LEG_LENGTH)) % 384);
-      }
-    }
-  for (int i = 0; i < N_LEDS; i++) {
-    strip.setPixelColor(i,rainbowColors[i]);
-  }
-  strip.show();
-    delay(5000);
-}
   
 // Create a candy cane pattern going down each strip
 void candyCane(uint32_t c1, uint32_t c2, uint8_t len, uint8_t space, uint8_t wait) {
@@ -127,12 +98,18 @@ void candyCane(uint32_t c1, uint32_t c2, uint8_t len, uint8_t space, uint8_t wai
     int location = 0;
     while (location < LEG_LENGTH) {
       for (int j = 0; j < len; j++, location++) {
+if (i < location) {
+  continue;
+}
         for (int k = 0; k < N_STRIPS; k++) {
           strip.setPixelColor(lights[k][(i + location) % LEG_LENGTH], c1);
         }
         
       }
       for (int j = 0; j < space; j++, location++) {
+        if (i < location) {
+  continue;
+}
         for (int k = 0; k < N_STRIPS; k++) {
           strip.setPixelColor(lights[k][(i + location) % LEG_LENGTH], c2);
         }
@@ -163,13 +140,21 @@ void colorChase(uint32_t c, uint8_t wait) {
 
 // fill the dots one after the other with said color
 // good for testing purposes
-void colorWipe(uint32_t c, uint8_t wait) {
+void colorWipe(uint32_t c, boolean startFromZero, uint8_t wait) {
   int i;
 
-  for (i=0; i < strip.numPixels(); i++) {
+  if (startFromZero) {
+    for (i=0; i < strip.numPixels(); i++) {
+        strip.setPixelColor(i, c);
+        strip.show();
+        delay(wait);
+    }
+  } else {
+    for (i = N_LEDS - 1; i >=0; i--) {
       strip.setPixelColor(i, c);
       strip.show();
       delay(wait);
+    }
   }
 }
 
@@ -274,11 +259,11 @@ void rainbowJump(uint8_t wait) {
     delay(wait);
   }
 }
-// Cycle through the color wheel, equally spaced around the belt
+// Cycle through the color wheel, equally spaced around the strip
 void rainbowCycle(uint8_t wait) {
   uint16_t i, j;
 
-  for (j=0; j < 384 * 5; j++) {     // 5 cycles of all 384 colors in the wheel
+  for (j=0; j < 384 * 3; j++) {     // 5 cycles of all 384 colors in the wheel
     for (i=0; i < strip.numPixels(); i++) {
       // tricky math! we use each pixel as a fraction of the full 384-color
       // wheel (thats the i / strip.numPixels() part)
@@ -294,7 +279,7 @@ void rainbowCycle(uint8_t wait) {
 void rainbowCycleWave(uint8_t wait) {
   uint16_t i, j;
 
-  for (j=0; j < 384 * 5; j++) {     // 5 cycles of all 384 colors in the wheel
+  for (j=0; j < 384 * 3; j++) {     // 5 cycles of all 384 colors in the wheel
     for (i=0; i < LEG_LENGTH; i++) {
       // tricky math! we use each pixel as a fraction of the full 384-color
       // wheel (thats the i / strip.numPixels() part)
