@@ -42,43 +42,31 @@ void setup() {
   strip.show();
 }
 
-// function prototypes, do not remove these!
-void candyCane(uint32_t c1, uint32_t c2, uint8_t len, uint8_t space, uint8_t wait);
-void colorChase(uint32_t c, uint8_t wait);
-void colorWipe(uint32_t c, uint8_t wait);
-void dither(uint8_t wait);
-void merge(uint32_t c1, uint32_t c2, boolean fromEdges, uint8_t wait);
-void rainbowDither(uint8_t wait);
-void rainbowCycle(uint8_t wait);
-void rainbowCycleWave(uint8_t wait);
-void rainbowJump(uint8_t wait);
-void scanner(uint8_t r, uint8_t g, uint8_t b, uint8_t wait);
-void spiral(uint32_t c, boolean downDirection, uint8_t wait);
-void stack(uint32_t c1, uint32_t c2, boolean downDirection, uint8_t wait);
-void sweep(uint8_t wait, uint32_t spins);
-void wave(uint32_t c, int cycles, uint8_t wait);
-uint32_t Wheel(uint16_t WheelPos);
 
 void loop() {
-rainbowCycleWave(0);
-  
-for (int j = 0; j < 10; j++) {
-  for (int i = 1; i <= N_COLORS; i++ ) {
-    merge(colors[i % N_COLORS], colors[(i - 1) % N_COLORS], (j + i) % 2, 20);
-  }
-}
-
-rainbowJump(20);
-
-for (int i = 0; i < N_COLORS; i++) {
-  stack(colors[i], colors[(i - 1) % N_COLORS], i % 2, 5);
-}
-
+//dither(40);
+//
+//rainbowCycleWave(0);
+//
+//for (int j = 0; j < 10; j++) {
+//  for (int i = 1; i <= N_COLORS; i++ ) {
+//    merge(colors[i % N_COLORS], colors[(i - 1) % N_COLORS], (j + i) % 2, 20);
+//  }
+//}
+//
+//rainbowJump(20);
+//
+//stack(colors[4], 0, 1, 5);
+//for (int i = 0; i < N_COLORS - 2; i++) {
+//  stack(colors[i], colors[(i - 1) % N_COLORS], i % 2, 5);
+//}
+//
+//stack(colors[N_COLORS - 3], colors[(N_COLORS - 4) % N_COLORS], 1, 5);
 for (int i = 0; i < N_COLORS; i++) {
  candyCane(colors[i], colors[(i - 1) % N_COLORS], 3, 7, 100);
 }
 
-dither(40);
+
 
 for (int i = 0; i < N_COLORS; i++) {
   spiral(colors[i], i % 2, 20);
@@ -111,20 +99,26 @@ rainbowCycle(0);  // make it go through the cycle fairly fast
   
 }
 
-void sweep(uint8_t wait, uint32_t spins) {
-  for (int i = 0; i < spins; i++) {
-    for (int j = 0; j < N_LEDS; j++) {
-      if ((i + j) % LED_PER_ROW < N_COLORS) {
-        strip.setPixelColor(j, colors[(i + j) % LED_PER_ROW]);
-      } else {
-        strip.setPixelColor(j, 0);
+
+
+void setRainbowColors() {
+  uint32_t rainbowColors[N_LEDS];  
+  for (int i=0; i < LEG_LENGTH; i++) {
+      // tricky math! we use each pixel as a fraction of the full 384-color
+      // wheel (thats the i / strip.numPixels() part)
+      // Then add in j which makes the colors go around per pixel
+      // the % 384 is to make the wheel cycle around
+      for (int k = 0; k < N_STRIPS; k++) {
+        rainbowColors[lights[k][i]] = Wheel(((i * 384 / LEG_LENGTH)) % 384);
       }
     }
-    strip.show();
-    delay(wait);
+  for (int i = 0; i < N_LEDS; i++) {
+    strip.setPixelColor(i,rainbowColors[i]);
   }
+  strip.show();
+    delay(5000);
 }
-
+  
 // Create a candy cane pattern going down each strip
 void candyCane(uint32_t c1, uint32_t c2, uint8_t len, uint8_t space, uint8_t wait) {
   uint32_t pixelColor;
@@ -182,6 +176,12 @@ void colorWipe(uint32_t c, uint8_t wait) {
 // An "ordered dither" fills every pixel in a sequence that looks
 // sparkly and almost random, but actually follows a specific order.
 void dither(uint8_t wait) {
+  uint32_t rainbowColors[N_LEDS];  // Make the dither pattern transition into the rainbowCycleWave pattern
+  for (int i=0; i < LEG_LENGTH; i++) {
+      for (int k = 0; k < N_STRIPS; k++) {
+        rainbowColors[lights[k][i]] = Wheel(((i * 384 / LEG_LENGTH)) % 384);
+      }
+    }
 
   // Determine highest bit needed to represent pixel index
   int hiBit = 0;
@@ -198,7 +198,7 @@ void dither(uint8_t wait) {
       reverse <<= 1;
       if(i & bit) reverse |= 1;
     }
-    strip.setPixelColor(reverse, colors[random(N_COLORS)]);
+    strip.setPixelColor(reverse, rainbowColors[reverse]);
     strip.show();
     delay(wait);
   }
@@ -291,7 +291,6 @@ void rainbowCycle(uint8_t wait) {
   }
 }
 
-// Cycle through the color wheel, going down all four strands simultaneously
 void rainbowCycleWave(uint8_t wait) {
   uint16_t i, j;
 
@@ -408,6 +407,20 @@ void stack(uint32_t c1, uint32_t c2, boolean downDirection, uint8_t wait) {
       }
     }
   }    
+}
+
+void sweep(uint8_t wait, uint32_t spins) {
+  for (int i = 0; i < spins; i++) {
+    for (int j = 0; j < N_LEDS; j++) {
+      if ((i + j) % LED_PER_ROW < N_COLORS) {
+        strip.setPixelColor(j, colors[(i + j) % LED_PER_ROW]);
+      } else {
+        strip.setPixelColor(j, 0);
+      }
+    }
+    strip.show();
+    delay(wait);
+  }
 }
 
 
