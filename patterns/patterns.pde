@@ -46,17 +46,18 @@ void setup() {
 void loop() {
 dither(40);
 
+for (int j = 0; j < 10; j++) {
+  for (int i = 1; i <= N_COLORS; i++ ) {
+    merge(colors[i % N_COLORS], (j + i) % 2, 20);
+  }
+}
+
 rainbowCycleWave(0);
 
-//Wavy ripple effects
 wave(strip.Color(127,0,0), 4, 20);        // candy cane
 wave(strip.Color(0,0,100), 2, 40);        // icy
 
-for (int j = 0; j < 10; j++) {
-  for (int i = 1; i <= N_COLORS; i++ ) {
-    merge(colors[i % N_COLORS], colors[(i - 1) % N_COLORS], (j + i) % 2, 20);
-  }
-}
+
 
 rainbowJump(20);
 
@@ -81,7 +82,6 @@ for (int i = 0; i < N_COLORS; i++) {
   colorWipe(colors[i], i % 2, 20);
 }
 
-// make a pretty rainbow cycle!
 rainbowCycle(0);  // make it go through the cycle fairly fast
   
 rainbowDither(10);
@@ -191,31 +191,25 @@ void dither(uint8_t wait) {
 }
 
 // Lights merge together either from top and bottom or apart from middle
-void merge(uint32_t c1, uint32_t c2, boolean fromEdges, uint8_t wait) {
-  for (int i = 0; i < strip.numPixels(); i++) {
-    strip.setPixelColor(i, c2);
-  }
-  strip.show();
-  delay(wait);  
-  if (fromEdges) {
-    for (int i = 0, j = LEG_LENGTH - 1; i < j; i++, j--) {
-      for (int k = 0; k < N_STRIPS; k++) {
-        strip.setPixelColor(lights[k][i], c1);
-        strip.setPixelColor(lights[k][j], c1);
-      }
-    strip.show();
-    delay(wait); 
-    }
-  } else {
-    for (int i = (LEG_LENGTH / 2) - 1, j = LEG_LENGTH / 2; i >=0; i--, j++) {
-      for (int k = 0; k < N_STRIPS; k++) {
-        strip.setPixelColor(lights[k][i], c1);
-        strip.setPixelColor(lights[k][j], c1);
+void merge(uint32_t c1, boolean fromEdges, uint8_t wait) {
+  
+    for (int i = 0; i < LEG_LENGTH / 2 - 1; i++) {
+      for (int k = 0; k <= i; k++) {
+        for (int m = 0; m < N_STRIPS; m++) {
+          uint32_t dimmedColor = dimColor(c1, (1.0 + k) / (1.0 + i));
+          if (fromEdges) {
+            strip.setPixelColor(lights[m][k], dimmedColor);
+            strip.setPixelColor(lights[m][LEG_LENGTH - 1 - k], dimmedColor);
+          } else {
+            strip.setPixelColor(lights[m][LEG_LENGTH / 2 - 1 - k], dimmedColor);
+            strip.setPixelColor(lights[m][LEG_LENGTH / 2 + k], dimmedColor);
+            
+          }
+        }
       }
       strip.show();
-      delay(wait);       
+      delay(wait); 
     }
-  }  
 }
 
 // An "ordered dither" fills every pixel in a sequence that looks
@@ -473,3 +467,13 @@ uint32_t Wheel(uint16_t WheelPos)
   }
   return(strip.Color(r,g,b));
 }
+
+uint32_t dimColor(uint32_t c, float fraction) {
+  byte  r, g, b;
+  g = ((c >> 16) & 0x7f) * fraction;
+  r = ((c >>  8) & 0x7f) * fraction;
+  b =  (c        & 0x7f) * fraction;
+  return strip.Color(r, g, b);
+}
+
+
