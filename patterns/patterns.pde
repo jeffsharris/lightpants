@@ -46,17 +46,16 @@ void setup() {
 void loop() {
 dither(40);
 
-for (int j = 0; j < 10; j++) {
-  for (int i = 1; i <= N_COLORS; i++ ) {
-    merge(colors[i % N_COLORS], (j + i) % 2, 20);
-  }
-}
-
 rainbowCycleWave(0);
 
 wave(strip.Color(127,0,0), 4, 20);        // candy cane
 wave(strip.Color(0,0,100), 2, 40);        // icy
 
+for (int j = 0; j < 10; j++) {
+  for (int i = 1; i <= N_COLORS; i++ ) {
+    merge(colors[i % N_COLORS], (j + i) % 2, 20);
+  }
+}
 
 
 rainbowJump(20);
