@@ -325,7 +325,7 @@ void sweep(uint8_t wait, uint32_t spins) {
       if ((i + j) % LED_PER_ROW < N_COLORS) {
         leds[j] = colors[(i + j) % LED_PER_ROW];
       } else {
-        leds[j] = CRBG(0, 0, 0);
+        leds[j] = CRGB::Black;
       }
     }
     FastLED.show();
@@ -363,7 +363,9 @@ void wave(CRGB c, int cycles, uint8_t wait) {
         g2 = (byte)((float)g * y);
         b2 = (byte)((float)b * y);
       }
-      leds[i] = CRBG(r2, g2, b2);
+      leds[i].r = r2;
+      leds[i].g = g2;
+      leds[i].b = b2;
     }
     FastLED.show();
     FastLED.delay(wait);
